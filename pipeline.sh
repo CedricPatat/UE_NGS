@@ -49,7 +49,7 @@ h=0
 for i in `seq 0 $(($j-1))`  # Boucle d'analyse trimmomatic sur chacun des fichiers
 do
 name=` echo ${FILES[h]}|cut -d"." -f1 `
-java -jar /home/cpatat/Downloads/Trimmomatic-0.39/trimmomatic-0.39.jar PE ${FILES[h]} ${FILES[h+1]} -baseout $name.fastq LEADING:20 TRAILING:20 MINLEN:50
+java -jar Trimmomatic-0.39/trimmomatic-0.39.jar PE ${FILES[h]} ${FILES[h+1]} -baseout $name.fastq LEADING:20 TRAILING:20 MINLEN:50
 h=$(($h + 2))
 done
 
@@ -127,4 +127,5 @@ mv $i genome_datas/$i
 done
 
 echo -e '\033[1;0;32m EXECUTION TERMINÉE \033[0m'
+
 
