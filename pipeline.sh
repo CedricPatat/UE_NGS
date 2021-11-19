@@ -8,7 +8,7 @@ echo -e '\033[1;0;33m CONNEXION A LA VM ET CREATION DU RÉPERTOIRE \033[0m'
 
 # Téléchargement des données 
 echo -e '\033[1;0;33m RÉCUPÉRATION ET DÉCOMPRESSION DES DONNÉES \033[0m'
-#wget  http://rssf.i2bc.paris-saclay.fr/X-fer/AtelierNGS/TPrnaseq.tar.gz  # récupération des données
+wget  http://rssf.i2bc.paris-saclay.fr/X-fer/AtelierNGS/TPrnaseq.tar.gz  # récupération des données
 tar -zxvf TPrnaseq.tar.gz    # décompression des données
 
 
@@ -49,7 +49,7 @@ h=0
 for i in `seq 0 $(($j-1))`  # Boucle d'analyse trimmomatic sur chacun des fichiers
 do
 name=` echo ${FILES[h]}|cut -d"." -f1 `
-java -jar /home/cpatat/Telechargements/Trimmomatic-0.39/trimmomatic-0.39.jar PE ${FILES[h]} ${FILES[h+1]} -baseout $name.fastq LEADING:20 TRAILING:20 MINLEN:50
+java -jar /home/cpatat/Downloads/Trimmomatic-0.39/trimmomatic-0.39.jar PE ${FILES[h]} ${FILES[h+1]} -baseout $name.fastq LEADING:20 TRAILING:20 MINLEN:50
 h=$(($h + 2))
 done
 
@@ -75,11 +75,9 @@ done
 echo -e '\033[1;0;33m TÉLÉCHARGEMENT DU GÉNOME HUMAIN ET DE SON ANNOTATION \033[0m'
 wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr18.fa.gz    # téléchargement du génome humain 
 gunzip chr18.fa.gz  # Decompression du fichier fasta
-rm -r chr18.fa.gz   # Suppression de l'archive
 
 wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz # téléchargement de l'annotation du génome humain
 gunzip gencode.v24lift37.basic.annotation.gtf.gz  # Décompression de l'archive
-rm -r gencode.v24lift37.basic.annotation.gtf.gz   # Suppression de l'archive
 
 
 
@@ -88,7 +86,7 @@ echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
 
 mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
 mkdir fastqc_results    # Répertoire qui contiendra les fichiers de contrôle qualité
-mkdir inital_datas      # Répertoire qui contiendra les fichiers de données initiaux
+mkdir initial_datas      # Répertoire qui contiendra les fichiers de données initiaux
 mkdir genome_datas      # Répertoire qui contiendra les fichiers de données du génome humain (chromosome 18)
 
 # Déplacement des fichiers issus du trimming dans le répertoire trimming_results
@@ -115,7 +113,7 @@ done
 # Déplacement des fichiers de données initiales dans le répertoire inital_datas
 for i in `find *.fastq`    
 do
-mv $i inital_datas/$i
+mv $i initial_datas/$i
 done
 
 # Déplacement des fichiers du génome + annotation dans le répertoire genome_datas
