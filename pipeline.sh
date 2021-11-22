@@ -31,6 +31,14 @@ else
     sudo apt-get install -y trimmomatic  # installation de trimmomatic
 fi
 
+dpkg -s rna-star &> /dev/null  # Trimmomatic
+if [ $? -eq 0 ]; then
+    echo "Le package RNA-STAR est déjà installé"
+else
+    echo "Installation du package RNA-STAR"
+    sudo apt-get install -y rna-star  # installation de trimmomatic
+fi
+
 
 # Récupération du nom des fichiers d'intérêts
 echo -e '\033[1;0;33m RÉCUPÉRATION DU NOM DES FICHIERS À ANALYSER \033[0m'
