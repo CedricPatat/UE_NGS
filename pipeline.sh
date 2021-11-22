@@ -160,7 +160,7 @@ done
 
 
 
-Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
+#Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
 echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
 
 mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
