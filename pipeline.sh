@@ -92,12 +92,12 @@ gunzip gencode.v24lift37.basic.annotation.gtf.gz  # Décompression de l'archive
 # Indexation du génome avec STAR
 echo -e '\033[1;0;33m INDEXATION DU GENOME AVEC STAR \033[0m'
 mkdir StarIndex
-STAR /
-    --runMode genomeGenerate /
-    --runThreadN 4 /
-    --genomeDir StarIndex /
-    --genomeFastaFiles chr18.fa /
-    --sjdbGTFfile gencode.v24lift37.basic.annotation.gtf /
+STAR \
+    --runMode genomeGenerate \
+    --runThreadN 4 \
+    --genomeDir StarIndex \
+    --genomeFastaFiles chr18.fa \
+    --sjdbGTFfile gencode.v24lift37.basic.annotation.gtf \
     --genomeSAindexNbases 12
 
 
