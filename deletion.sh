@@ -11,6 +11,7 @@ rm -fr genome_datas
 rm -fr initial_datas
 rm -fr trimming_results
 rm -fr TPrnaseq.tar.gz
+rm -fr StarIndex
 
 
 echo ========================================
