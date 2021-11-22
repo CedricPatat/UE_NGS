@@ -51,7 +51,7 @@ j=$(($j + 1))
 done
 
 
-# trimming sur les fichiers fastq
+# Trimming sur les fichiers fastq
 echo -e '\033[1;0;33m ANALYSE DES FICHIERS AVEC TRIMMOMATIC \033[0m'
 h=0
 for i in `seq 0 $(($j-1))`  # Boucle d'analyse trimmomatic sur chacun des fichiers
@@ -91,71 +91,144 @@ gunzip gencode.v24lift37.basic.annotation.gtf.gz  # Décompression de l'archive
 
 # Indexation du génome avec STAR
 echo -e '\033[1;0;33m INDEXATION DU GENOME AVEC STAR \033[0m'
-mkdir StarIndex
+mkdir star_index
 STAR \
     --runMode genomeGenerate \
     --runThreadN 4 \
-    --genomeDir StarIndex \
+    --genomeDir StarIndstar_index \
     --genomeFastaFiles chr18.fa \
     --sjdbGTFfile gencode.v24lift37.basic.annotation.gtf \
     --genomeSAindexNbases 12
 
 
+# Mapping avec STAR
+echo -e '\033[1;0;33m Récupération des préfixes \033[0m'
+
+FILES_R1=()  # liste contenant les noms des fichiers
+j=0     # indice d'incrémentation
+for i in `find *_1P.fastq`    # Boucle enregistrant chaque nom fichier fastq dans la liste
+do
+FILES_R1[j]=$i
+j=$(($j + 1))
+done
+
+FILES_R2=()  # liste contenant les noms des fichiers
+j=0     # indice d'incrémentation
+for i in `find *_2P.fastq`    # Boucle enregistrant chaque nom fichier fastq dans la liste
+do
+FILES_R2[j]=$i
+j=$(($j + 1))
+done
+
+echo ${FILES_R1[@]}
+echo ${FILES_R2[@]}
+
+
+echo -e '\033[1;0;33m MAPPING DU GENOME AVEC STAR \033[0m'
+for i in `seq 0 $(($j-1))`
+do
+name=` echo ${FILES_R1[i]}|cut -d"c" -f1`
+echo $name
+STAR \
+    --runThreadN 4 \
+    --outFilterMultimapNmax 1 \
+    --genomeDir star_index \
+    --outSAMattributes All \
+    --outSAMtype BAM SortedByCoordinate \
+    --outFileNamePrefix name \
+    --readFilesIn ${FILES_R1[i]} ${FILES_R2[i]}
+done
 
 
 
+# Tri et indexation du fichier BAM
+echo -e '\033[1;0;33m TRI ET INDEXATION DU FICHIER BAM \033[0m'
+
+FILES_BAM=()  # liste contenant les noms des fichiers
+j=0     # indice d'incrémentation
+for i in `find *.bam`    # Boucle enregistrant chaque nom fichier bamls dans la liste
+do
+FILES_BAM[j]=$i
+j=$(($j + 1))
+done
+
+
+for i in `seq 0 $(($j-1))`
+do
+samtools index ${FILES_BAM[i]}
+done
 
 
 
+Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
+echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
+
+mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
+mkdir fastqc_results    # Répertoire qui contiendra les fichiers de contrôle qualité
+mkdir initial_datas     # Répertoire qui contiendra les fichiers de données initiaux
+mkdir genome_datas      # Répertoire qui contiendra les fichiers de données du génome humain (chromosome 18)
+mkdir star_mapping      # Répertoire qui contiendra les fichiers du mapping STAR
+mkdir samtools_index    # Répertoire qui contiendra les fichiers .bai
+
+# Déplacement des fichiers issus du trimming dans le répertoire trimming_results
+for i in `find *P.fastq`    
+do
+mv $i trimming_results/$i
+done
+for i in `find *U.fastq`    
+do
+mv $i trimming_results/$i
+done
+
+# Déplacement des fichiers issus de l'analyse qualité dans le répertoire inital_datas
+for i in `find *fastqc.html`    
+do
+mv $i fastqc_results/$i
+done
+for i in `find *fastqc.zip`    
+do
+mv $i fastqc_results/$i
+done
 
 
+# Déplacement des fichiers de données initiales dans le répertoire inital_datas
+for i in `find *.fastq`    
+do
+mv $i initial_datas/$i
+done
+
+# Déplacement des fichiers du génome + annotation dans le répertoire genome_datas
+for i in `find *.fa`    
+do
+mv $i genome_datas/$i
+done
+for i in `find *.gtf`    
+do
+mv $i genome_datas/$i
+done
 
 
-
-# Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
-# echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
-
-# mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
-# mkdir fastqc_results    # Répertoire qui contiendra les fichiers de contrôle qualité
-# mkdir initial_datas     # Répertoire qui contiendra les fichiers de données initiaux
-# mkdir genome_datas      # Répertoire qui contiendra les fichiers de données du génome humain (chromosome 18)
-
-# # Déplacement des fichiers issus du trimming dans le répertoire trimming_results
-# for i in `find *P.fastq`    
-# do
-# mv $i trimming_results/$i
-# done
-# for i in `find *U.fastq`    
-# do
-# mv $i trimming_results/$i
-# done
-
-# # Déplacement des fichiers issus de l'analyse qualité dans le répertoire inital_datas
-# for i in `find *fastqc.html`    
-# do
-# mv $i fastqc_results/$i
-# done
-# for i in `find *fastqc.zip`    
-# do
-# mv $i fastqc_results/$i
-# done
+# Déplacement des fichiers du mapping STAR dans le répertoire star_mapping
+for i in `find *.bam`    
+do
+mv $i star_mapping/$i
+done
+for i in `find *.out`    
+do
+mv $i star_mapping/$i
+done
+for i in `find *.tab`    
+do
+mv $i star_mapping/$i
+done
 
 
-# # Déplacement des fichiers de données initiales dans le répertoire inital_datas
-# for i in `find *.fastq`    
-# do
-# mv $i initial_datas/$i
-# done
+# Déplacement des fichiers de l'indexation samtools dans le répertoire samtools_index
+for i in `find *.bai`    
+do
+mv $i samtools_index/$i
+done
 
-# # Déplacement des fichiers du génome + annotation dans le répertoire genome_datas
-# for i in `find *.fa`    
-# do
-# mv $i genome_datas/$i
-# done
-# for i in `find *.gtf`    
-# do
-# mv $i genome_datas/$i
-# done
 
 echo -e '\033[1;0;32m EXECUTION TERMINÉE \033[0m'
 
