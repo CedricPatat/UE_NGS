@@ -128,14 +128,13 @@ echo -e '\033[1;0;33m MAPPING DU GENOME AVEC STAR \033[0m'
 for i in `seq 0 $(($j-1))`
 do
 name=` echo ${FILES_R1[i]}|cut -d"c" -f1`
-echo $name
 STAR \
     --runThreadN 4 \
     --outFilterMultimapNmax 1 \
     --genomeDir star_index \
     --outSAMattributes All \
     --outSAMtype BAM SortedByCoordinate \
-    --outFileNamePrefix name \
+    --outFileNamePrefix $name \
     --readFilesIn ${FILES_R1[i]} ${FILES_R2[i]}
 done
 
