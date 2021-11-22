@@ -95,7 +95,7 @@ mkdir star_index
 STAR \
     --runMode genomeGenerate \
     --runThreadN 4 \
-    --genomeDir StarIndstar_index \
+    --genomeDir star_index \
     --genomeFastaFiles chr18.fa \
     --sjdbGTFfile gencode.v24lift37.basic.annotation.gtf \
     --genomeSAindexNbases 12
