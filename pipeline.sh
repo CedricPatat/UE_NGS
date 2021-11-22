@@ -120,10 +120,6 @@ FILES_R2[j]=$i
 j=$(($j + 1))
 done
 
-echo ${FILES_R1[@]}
-echo ${FILES_R2[@]}
-
-
 echo -e '\033[1;0;33m MAPPING DU GENOME AVEC STAR \033[0m'
 for i in `seq 0 $(($j-1))`
 do
