@@ -81,12 +81,34 @@ gunzip gencode.v24lift37.basic.annotation.gtf.gz  # Décompression de l'archive
 
 
 
+# Indexation du génome avec STAR
+STAR 
+    --runMode genomeGenerate 
+    --runThreadN 4 
+    --genomeDir StarIndex 
+    --genomeFastaFiles chr18.fa 
+    --sjdbGTFfile gencode.v24lift37.basic.annotation.gtf 
+    --genomeSAindexNbases 12
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
 echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
 
 mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
 mkdir fastqc_results    # Répertoire qui contiendra les fichiers de contrôle qualité
-mkdir initial_datas      # Répertoire qui contiendra les fichiers de données initiaux
+mkdir initial_datas     # Répertoire qui contiendra les fichiers de données initiaux
 mkdir genome_datas      # Répertoire qui contiendra les fichiers de données du génome humain (chromosome 18)
 
 # Déplacement des fichiers issus du trimming dans le répertoire trimming_results
