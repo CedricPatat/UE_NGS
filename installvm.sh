@@ -1,4 +1,4 @@
 # Script d'installation de la Machine Virtuelle
 
-chomd +x pipeline.sh
-chomd +x deletion.sh
+chmod +x pipeline.sh
+chmod +x deletion.sh
