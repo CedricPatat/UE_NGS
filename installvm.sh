@@ -2,6 +2,6 @@
 
 chmod +x pipeline.sh
 chmod +x deletion.sh
-conda activate
+
 conda install samtools
  
