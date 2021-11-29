@@ -156,73 +156,73 @@ done
 
 
 #Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
-echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
+# echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
 
-mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
-mkdir fastqc_results    # Répertoire qui contiendra les fichiers de contrôle qualité
-mkdir initial_datas     # Répertoire qui contiendra les fichiers de données initiaux
-mkdir genome_datas      # Répertoire qui contiendra les fichiers de données du génome humain (chromosome 18)
-mkdir star_mapping      # Répertoire qui contiendra les fichiers du mapping STAR
-mkdir samtools_index    # Répertoire qui contiendra les fichiers .bai
+# mkdir trimming_results  # Répertoire qui contiendra les fichiers issus du trimming
+# mkdir fastqc_results    # Répertoire qui contiendra les fichiers de contrôle qualité
+# mkdir initial_datas     # Répertoire qui contiendra les fichiers de données initiaux
+# mkdir genome_datas      # Répertoire qui contiendra les fichiers de données du génome humain (chromosome 18)
+# mkdir star_mapping      # Répertoire qui contiendra les fichiers du mapping STAR
+# mkdir samtools_index    # Répertoire qui contiendra les fichiers .bai
 
-# Déplacement des fichiers issus du trimming dans le répertoire trimming_results
-for i in `find *P.fastq`    
-do
-mv $i trimming_results/$i
-done
-for i in `find *U.fastq`    
-do
-mv $i trimming_results/$i
-done
+# # Déplacement des fichiers issus du trimming dans le répertoire trimming_results
+# for i in `find *P.fastq`    
+# do
+# mv $i trimming_results/$i
+# done
+# for i in `find *U.fastq`    
+# do
+# mv $i trimming_results/$i
+# done
 
-# Déplacement des fichiers issus de l'analyse qualité dans le répertoire inital_datas
-for i in `find *fastqc.html`    
-do
-mv $i fastqc_results/$i
-done
-for i in `find *fastqc.zip`    
-do
-mv $i fastqc_results/$i
-done
-
-
-# Déplacement des fichiers de données initiales dans le répertoire inital_datas
-for i in `find *.fastq`    
-do
-mv $i initial_datas/$i
-done
-
-# Déplacement des fichiers du génome + annotation dans le répertoire genome_datas
-for i in `find *.fa`    
-do
-mv $i genome_datas/$i
-done
-for i in `find *.gtf`    
-do
-mv $i genome_datas/$i
-done
+# # Déplacement des fichiers issus de l'analyse qualité dans le répertoire inital_datas
+# for i in `find *fastqc.html`    
+# do
+# mv $i fastqc_results/$i
+# done
+# for i in `find *fastqc.zip`    
+# do
+# mv $i fastqc_results/$i
+# done
 
 
-# Déplacement des fichiers du mapping STAR dans le répertoire star_mapping
-for i in `find *.bam`    
-do
-mv $i star_mapping/$i
-done
-for i in `find *.out`    
-do
-mv $i star_mapping/$i
-done
-for i in `find *.tab`    
-do
-mv $i star_mapping/$i
-done
+# # Déplacement des fichiers de données initiales dans le répertoire inital_datas
+# for i in `find *.fastq`    
+# do
+# mv $i initial_datas/$i
+# done
+
+# # Déplacement des fichiers du génome + annotation dans le répertoire genome_datas
+# for i in `find *.fa`    
+# do
+# mv $i genome_datas/$i
+# done
+# for i in `find *.gtf`    
+# do
+# mv $i genome_datas/$i
+# done
 
 
-# Déplacement des fichiers de l'indexation samtools dans le répertoire samtools_index
-for i in `find *.bai`    
-do
-mv $i samtools_index/$i
-done
+# # Déplacement des fichiers du mapping STAR dans le répertoire star_mapping
+# for i in `find *.bam`    
+# do
+# mv $i star_mapping/$i
+# done
+# for i in `find *.out`    
+# do
+# mv $i star_mapping/$i
+# done
+# for i in `find *.tab`    
+# do
+# mv $i star_mapping/$i
+# done
+
+
+# # Déplacement des fichiers de l'indexation samtools dans le répertoire samtools_index
+# for i in `find *.bai`    
+# do
+# mv $i samtools_index/$i
+# done
 
 
 echo -e '\033[1;0;32m EXECUTION TERMINÉE \033[0m'
