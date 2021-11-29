@@ -153,7 +153,23 @@ do
 samtools index ${FILES_BAM[i]}
 done
 
+# Comptage
+echo -e '\033[1;0;33m COMPTAGE \033[0m'
+sudo apt-get install subread
+featureCounts -p -t exon -g gene_id -a *.gtf \
+    -o counts.txt *.bam
 
+# Encodage to HUGO
+echo -e '\033[1;0;33m ENCODAGE TO HUGO \033[0m'
+perl -ne 'print "$1 $2\n" if /gene_id \"(.*?)\".*gene_name \"(.*?)\"/' \
+   *.gtf | sort | uniq > encode-to-hugo.tab
+
+#Remplacement des noms de gènes
+sort counts.txt > temp1
+sort encode-to-hugo.tab > temp2
+join temp1 temp2 |grep "chr18" > temp3
+
+awk '{print $13 " " $6 " " $7 " " $8 " " $9 " " $10 " " $11 " " $12}' temp3 > counts.mtx
 
 #Organisation des résultats et des données dans des répertoires pour une meilleur lisibilité
 # echo -e '\033[1;0;33m RANGEMENT DES FICHIERS \033[0m'
