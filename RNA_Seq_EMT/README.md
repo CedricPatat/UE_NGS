@@ -12,6 +12,7 @@
     
    The proposed pipeline uses Conda (Bioconda) for different processes. You must therefore have installed conda beforehand. <br>
    To retrieve the scripts, clone the repository: `$ git clone https://github.com/CedricPatat/UE_NGS.git`. <br>
+   Open the folder containing the scripts: `$ cd RNA_Seq_EMT`. <br>
    Then activate conda: `$ conda activate`. <br>
    And allow initialization.sh to be executed: `$ chmod +x initialization.sh`. <br>
    Initialize the machine: `$ ./initialization.sh`. <br>
