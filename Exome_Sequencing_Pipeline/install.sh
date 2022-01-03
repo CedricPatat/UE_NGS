@@ -27,3 +27,8 @@ if [ ! -f trimmomatic_results ];then     # trimmomatic_results file containing R
 else
     echo "trimmomatic_results already exists"
 fi
+if [ ! -f varscan_results ];then     # varscan_results file containing RNA-Seq data
+  mkdir varscan_results
+else
+    echo "varscan_results already exists"
+fi
