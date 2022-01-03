@@ -99,7 +99,7 @@ path_to_tumor_mpileup=`find outputs/*-T-*.mpileup`
 output_name='TCRBOA7'  # A CHANGER
 
 
-varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan/$output_name
+varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan_results/$output_name
 
 
 # Basic VCF Annotation
@@ -115,7 +115,7 @@ gunzip gencode.v24lift37.basic.annotation.gtf.gz
 mkdir intersect
 
 
-for i in `find varscan/*`
+for i in `find varscan_results/*`
 do
 
 name=`echo $i|cut -d"/" -f2 `
