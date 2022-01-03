@@ -7,12 +7,10 @@
 echo -e '\033[1;0;33m DOWNLOADING DATA \033[0m'
 
 # Downloading patient data
-if [ ! -e initial_datas/patient7.tar.gz ];then     
+if [ ! -e patient7.exome/TCRBOA7-N-WEX-chr16_r1F.fastq ] || [ ! -e patient7.exome/TCRBOA7-N-WEX-chr16_r2F.fastq ] || [ ! -e patient7.exome/TCRBOA7-T-WEX-chr16_r1F.fastq ] || [ ! -e patient7.exome/TCRBOA7-T-WEX-chr16_r2F.fastq ];then     
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1DM9g8OulE1ScBk-HoaREfUZs6gurtkBe' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1DM9g8OulE1ScBk-HoaREfUZs6gurtkBe" -O patient7.tar.gz && rm -rf /tmp/cookies.txt  # downloading data
     tar -zxvf patient7.tar.gz    # data decompression
     gunzip patient7.exome/*      # .fastq decompression
-    # mv *.fastq initial_datas/    # moving .fastq files to initial_datas
-    # mv *.tar.gz initial_datas/   # moving compressed file to initial_datas
 else
     echo "RNA-Seq data is already downloaded."
 fi
@@ -27,10 +25,10 @@ else
 fi
 
 # Downloading the genome annotation
-if [ ! -e gencode.v24lift37.basic.annotation.gtf ];then 
+if [ ! -e annotation/gencode.v24lift37.basic.annotation.gtf ];then 
     wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz   # download the annotation
     gunzip *.gtf.gz            # annotation file decompression
-    mv *.gtf initial_datas/*   # moving the annotation file to index
+    mv *.gtf annotation/   # moving the annotation file to index
 else
     echo "Annotation is already downloaded."
 fi
@@ -79,7 +77,7 @@ done
 
 for i in `seq 0 $(($j-1))`  # Loop on each file
 do
-bwa mem -M -t 2 -A 2 -E 1 index/chr16.fa trimming_results/${files[$i]}_1P.fastq trimming_results/${files[$i]}_2P.fastq > outputs/${files[$i]}
+bwa mem -M -t 2 -A 2 -E 1 index/chr16.fa trimmomatic_results/${files[$i]}_1P.fastq trimmomatic_results/${files[$i]}_2P.fastq > output_results/${files[$i]}.sam
 done
 
 # Processing SAM files
@@ -87,7 +85,7 @@ echo -e '\033[1;0;33m PROCESSING SAM FILES WITH SAMTOOLS \033[0m'
 
 files=()  # list containing the names of the files
 j=0     # increment index
-for i in `find outputs/*.sam`    # Loop saving each 1P.fastq file name in the list
+for i in `find output_results/*.sam`    # Loop saving each 1P.fastq file name in the list
 do
 name=` echo $i|cut -d"." -f1 ` 
 files[j]=$name
@@ -104,12 +102,12 @@ samtools view -S -b $file.sam  > $file.bam
 # flagstats
 samtools flagstat $file.bam
 #Sort Bam
-samtools sort $file.bam > $file.bai
+samtools sort $file.bam > $file.sorted_bam
 #Index bam file
 samtools index $file.bam
 
 #Convert to Mpileup
-samtools mpileup -B -A -f index/chr16.fa  $file.bai > $file.mpileup
+samtools mpileup -B -A -f index/chr16.fa  $file.sorted_bam > $file.mpileup
 
 done
 
@@ -117,8 +115,8 @@ done
 # Calling somatic variants with Varscan
 echo -e '\033[1;0;33m CALLING SOMATIC VARIANTS WITH VARSCAN  \033[0m'
 
-path_to_normal_mpileup=`find outputs/*-N-*.mpileup`
-path_to_tumor_mpileup=`find outputs/*-T-*.mpileup`
+path_to_normal_mpileup=`find output_results/*-N-*.mpileup`
+path_to_tumor_mpileup=`find output_results/*-T-*.mpileup`
 output_name='TCRBOA7'  # A CHANGER
 
 
@@ -133,12 +131,12 @@ do
 
 name=`echo $i|cut -d"/" -f2 `
 
-grep -i 'somatic' $i > filtered/$name
+grep -i 'somatic' $i > filtered_vcf/$name
 awk '{OFS="\t"; if (!/^#/){print $1,$2-1,$2,$4"/"$5,"+"}}' \
-   filtered/$name > bed/$name
+   filtered_vcf/$name > bed_results/$name
 
-bedtools intersect -a *.gtf -b bed/$name > intersect/$name 
-grep '\sgene\s' intersect/$name  | awk '{print " " $1 " " $4 " " $5 " " $16}'
+bedtools intersect -a annotation/*.gtf -b bed_results/$name > intersect_results/$name 
+grep '\sgene\s' intersect_results/$name  | awk '{print " " $1 " " $4 " " $5 " " $16}'
 
 done
 
