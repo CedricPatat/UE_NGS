@@ -92,7 +92,6 @@ done
 
 # Calling somatic variants with Varscan
 
-mkdir varscan
 
 path_to_normal_mpileup=`find outputs/*-N-*.mpileup`
 path_to_tumor_mpileup=`find outputs/*-T-*.mpileup`
@@ -104,15 +103,11 @@ varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan_results/$ou
 
 # Basic VCF Annotation
 
-mkdir filtered
-mkdir bed
 
 
 wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz
 gunzip gencode.v24lift37.basic.annotation.gtf.gz
 
-
-mkdir intersect
 
 
 for i in `find varscan_results/*`
