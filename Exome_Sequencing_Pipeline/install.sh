@@ -32,3 +32,18 @@ if [ ! -f varscan_results ];then     # varscan_results file containing RNA-Seq d
 else
     echo "varscan_results already exists"
 fi
+if [ ! -f filtered_vcf ];then     # filtered_vcf file containing RNA-Seq data
+  mkdir filtered_vcf
+else
+    echo "filtered_vcf already exists"
+fi
+if [ ! -f bed_results ];then     # bed_results file containing RNA-Seq data
+  mkdir bed_results
+else
+    echo "bed_results already exists"
+fi
+if [ ! -f intersect_results ];then     # intersect_results file containing RNA-Seq data
+  mkdir intersect_results
+else
+    echo "intersect_results already exists"
+fi
