@@ -106,6 +106,31 @@ output_name='TCRBOA7'  # A CHANGER
 varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan/$output_name
 
 
+# Basic VCF Annotation
+
+mkdir filtered
+mkdir bed
 
 
+wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz
+gunzip gencode.v24lift37.basic.annotation.gtf.gz
+
+
+conda install -y bedtools
+mkdir intersect
+
+
+for i in `find varscan/*`
+do
+
+name=`echo $i|cut -d"/" -f2 `
+
+grep -i 'somatic' $i > filtered/$name
+awk '{OFS="\t"; if (!/^#/){print $1,$2-1,$2,$4"/"$5,"+"}}' \
+   filtered/$name > bed/$name
+
+bedtools intersect -a *.gtf -b bed/$name > intersect/$name 
+grep '\sgene\s' intersect/$name  | awk '{print " " $1 " " $4 " " $5 " " $16}'
+
+done
 
