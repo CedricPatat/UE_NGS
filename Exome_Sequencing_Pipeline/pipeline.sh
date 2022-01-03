@@ -8,8 +8,8 @@ if [ ! -e patient7.tar.gz ];then
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1DM9g8OulE1ScBk-HoaREfUZs6gurtkBe' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1DM9g8OulE1ScBk-HoaREfUZs6gurtkBe" -O patient7.tar.gz && rm -rf /tmp/cookies.txt  # downloading RNA-Seq data
     tar -zxvf patient7.tar.gz    # data decompression
     gunzip patient7.exome/*  # .fastq decompression
-    #mv *.fastq initial_datas/
-    #mv *.tar.gz initial_datas/
+    mv *.fastq initial_datas/
+    mv *.tar.gz initial_datas/
 else
     echo "RNA-Seq data is already downloaded."
 fi
@@ -61,8 +61,6 @@ bwa mem -M -t 2 -A 2 -E 1 index/chr16.fa ${files[$i]}_1P.fastq ${files[$i]}_2P.f
 done
 
 # Processing SAM files
-# Processing SAM files
-
 
 files=()  # list containing the names of the files
 j=0     # increment index
@@ -95,7 +93,6 @@ done
 
 # Calling somatic variants with Varscan
 
-# conda install -y varscan # INSTALL.SH
 mkdir varscan
 
 path_to_normal_mpileup=`find outputs/*-N-*.mpileup`
