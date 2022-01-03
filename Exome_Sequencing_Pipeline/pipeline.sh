@@ -58,10 +58,9 @@ h=0
 for i in `seq 0 $(($j-1))`  # Trimmomatic analysis loop on each file
 do
 name=` echo ${files[h]}|cut -d"_" -f1 `
-trimmomatic PE patient7.exome/${files[h]} patient7.exome/${files[h+1]} -baseout trimmomatic_results/$name.fastq LEADING:20 TRAILING:20 MINLEN:50
+trimmomatic PE patient7.exome/${files[h]} patient7.exome/${files[h+1]} -baseout trimmomatic_results/$name.fastq LEADING:20 TRAILING:20 MINLEN:50   # trimmomatic analysis
 h=$(($h + 2))
 done
-
 
 # Mapping with BWA
 echo -e '\033[1;0;33m MAPPING WITH BWA  \033[0m'
@@ -82,61 +81,42 @@ done
 
 # Processing SAM files
 echo -e '\033[1;0;33m PROCESSING SAM FILES WITH SAMTOOLS \033[0m'
-
 files=()  # list containing the names of the files
 j=0     # increment index
-for i in `find output_results/*.sam`    # Loop saving each 1P.fastq file name in the list
+for i in `find output_results/*.sam`    # loop saving each 1P.fastq file name in the list
 do
 name=` echo $i|cut -d"." -f1 ` 
 files[j]=$name
 j=$(($j + 1))
 done
 
-
 for i in `seq 0 $(($j-1))`  # Loop on each file
 do
 file=${files[$i]}
-
-#Sam 2 Bam
-samtools view -S -b $file.sam  > $file.bam
-# flagstats
-samtools flagstat $file.bam
-#Sort Bam
-samtools sort $file.bam > $file.sorted_bam
-#Index bam file
-samtools index $file.bam
-
-#Convert to Mpileup
-samtools mpileup -B -A -f index/chr16.fa  $file.sorted_bam > $file.mpileup
-
+samtools view -S -b $file.sam  > $file.bam   # sam to bam
+samtools flagstat $file.bam   # flagstats
+samtools sort $file.bam > $file.sorted_bam  # sort bam
+samtools index $file.bam   # index bam file
+samtools mpileup -B -A -f index/chr16.fa  $file.sorted_bam > $file.mpileup  # convert to mpileup
 done
-
 
 # Calling somatic variants with Varscan
 echo -e '\033[1;0;33m CALLING SOMATIC VARIANTS WITH VARSCAN  \033[0m'
 
-path_to_normal_mpileup=`find output_results/*-N-*.mpileup`
-path_to_tumor_mpileup=`find output_results/*-T-*.mpileup`
-output_name='TCRBOA7'  # A CHANGER
-
-
-varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan_results/$output_name
-
+path_to_normal_mpileup=`find output_results/*-N-*.mpileup`  # path to normal mpileup file
+path_to_tumor_mpileup=`find output_results/*-T-*.mpileup`   # path to tumor mpileup file
+output_name='TCRBOA7' # name of sample
+varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan_results/$output_name   # varscan analysis
 
 # Basic VCF Annotation
 echo -e '\033[1;0;33m BASIC VCF ANNOTATION  \033[0m'
 
-for i in `find varscan_results/*`
+for i in `find varscan_results/*`  
 do
-
 name=`echo $i|cut -d"/" -f2 `
+grep -i 'somatic' $i > filtered_vcf/$name  # filtering results
+awk '{OFS="\t"; if (!/^#/){print $1,$2-1,$2,$4"/"$5,"+"}}' filtered_vcf/$name > bed_results/$name  # convert vcf to bed format
 
-grep -i 'somatic' $i > filtered_vcf/$name
-awk '{OFS="\t"; if (!/^#/){print $1,$2-1,$2,$4"/"$5,"+"}}' \
-   filtered_vcf/$name > bed_results/$name
-
-bedtools intersect -a annotation/*.gtf -b bed_results/$name > intersect_results/$name 
-grep '\sgene\s' intersect_results/$name  | awk '{print " " $1 " " $4 " " $5 " " $16}'
-
+bedtools intersect -a annotation/*.gtf -b bed_results/$name > intersect_results/$name   # extract all gene annotation for the somatic mutations
+grep '\sgene\s' intersect_results/$name  | awk '{print " " $1 " " $4 " " $5 " " $16}'   # extract GTF lines corresponding to gene and the gene names
 done
-
