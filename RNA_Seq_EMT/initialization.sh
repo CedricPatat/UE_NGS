@@ -35,7 +35,7 @@ fi
 if [ ! -f mapping ];then     # mapping file containing mapping and datas index 
   mkdir mapping
 else
-    echo "initial_datas already exists"
+    echo "mapping already exists"
 fi
 if [ ! -f star_index ];then     # star_index file containing genome index
   mkdir star_index
