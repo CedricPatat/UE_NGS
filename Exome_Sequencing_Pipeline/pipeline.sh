@@ -120,3 +120,5 @@ awk '{OFS="\t"; if (!/^#/){print $1,$2-1,$2,$4"/"$5,"+"}}' filtered_vcf/$name > 
 bedtools intersect -a annotation/*.gtf -b bed_results/$name > intersect_results/$name   # extract all gene annotation for the somatic mutations
 grep '\sgene\s' intersect_results/$name  | awk '{print " " $1 " " $4 " " $5 " " $16}'   # extract GTF lines corresponding to gene and the gene names
 done
+
+echo -e '\033[1;0;32m EXECUTION FINISHED \033[0m'
