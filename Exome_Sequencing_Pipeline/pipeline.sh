@@ -35,4 +35,77 @@ trimmomatic PE patient7.exome/${files[h]} patient7.exome/${files[h+1]} -baseout 
 h=$(($h + 2))
 done
 
+# Creating BWA Index
+wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr16.fa.gz
+gunzip chr16.fa.gz
+mkdir index
+mv chr16.fa index/chr16.fa
+conda install -y bwa
+bwa index -a bwtsw index/chr16.fa
+
+
+
+# Mapping with BWA
+files=()  # list containing the names of the files
+j=0     # increment index
+for i in `find *_1P.fastq`    # Loop saving each 1P.fastq file name in the list
+do
+name=` echo $i|cut -d"_" -f1 ` 
+files[j]=$name
+j=$(($j + 1))
+done
+
+for i in `seq 0 $(($j-1))`  # Loop on each file
+do
+bwa mem -M -t 2 -A 2 -E 1 index/chr16.fa ${files[$i]}_1P.fastq ${files[$i]}_2P.fastq > outputs/${files[$i]}
+done
+
+# Processing SAM files
+# Processing SAM files
+
+
+files=()  # list containing the names of the files
+j=0     # increment index
+for i in `find outputs/*.sam`    # Loop saving each 1P.fastq file name in the list
+do
+name=` echo $i|cut -d"." -f1 ` 
+files[j]=$name
+j=$(($j + 1))
+done
+
+
+for i in `seq 0 $(($j-1))`  # Loop on each file
+do
+file=${files[$i]}
+
+#Sam 2 Bam
+samtools view -S -b $file.sam  > $file.bam
+# flagstats
+samtools flagstat $file.bam
+#Sort Bam
+samtools sort $file.bam > $file.bai
+#Index bam file
+samtools index $file.bam
+
+#Convert to Mpileup
+samtools mpileup -B -A -f index/chr16.fa  $file.bai > $file.mpileup
+
+done
+
+
+# Calling somatic variants with Varscan
+
+# conda install -y varscan # INSTALL.SH
+mkdir varscan
+
+path_to_normal_mpileup=`find outputs/*-N-*.mpileup`
+path_to_tumor_mpileup=`find outputs/*-T-*.mpileup`
+output_name='TCRBOA7'  # A CHANGER
+
+
+varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan/$output_name
+
+
+
+
 
