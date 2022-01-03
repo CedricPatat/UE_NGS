@@ -2,8 +2,11 @@
 #######           PIPELINE SCRIPT             #######
 #####################################################
 
+
 # Downloading data
 echo -e '\033[1;0;33m DOWNLOADING DATA \033[0m'
+
+# Downloading patient data
 if [ ! -e patient7.tar.gz ];then     
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1DM9g8OulE1ScBk-HoaREfUZs6gurtkBe' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1DM9g8OulE1ScBk-HoaREfUZs6gurtkBe" -O patient7.tar.gz && rm -rf /tmp/cookies.txt  # downloading RNA-Seq data
     tar -zxvf patient7.tar.gz    # data decompression
@@ -13,6 +16,31 @@ if [ ! -e patient7.tar.gz ];then
 else
     echo "RNA-Seq data is already downloaded."
 fi
+
+# Downloading the reference genome
+if [ ! -e index/chr16.fa ];then 
+    wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr16.fa.gz
+    gunzip chr16.fa.gz
+    mv chr16.fa index/chr16.fa
+else
+    echo "Reference genome is already downloaded."
+fi
+
+# Downloading the genome annotation
+if [ ! -e gencode.v24lift37.basic.annotation.gtf ];then 
+    wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz
+    gunzip gencode.v24lift37.basic.annotation.gtf.gz
+else
+    echo "Annotation is already downloaded."
+fi
+
+# Indexing of the reference genome
+if [ ! -e index/chr16.fa.amb ] || [ ! -e index/chr16.fa.ann ] || [ ! -e index/chr16.fa.bwt ] || [ ! -e index/chr16.fa.fai ] || [ ! -e index/chr16.fa.pac ] || [ ! -e index/chr16.fa.sa ];then 
+    bwa index -a bwtsw index/chr16.fa
+else
+    echo " Indexing of the reference genome has already been performed."
+fi
+
 
 # Trimming data
 echo -e '\033[1;0;33m FILES ANALYSIS WITH TRIMMOMATIC \033[0m'
@@ -36,10 +64,6 @@ h=$(($h + 2))
 done
 
 # Creating BWA Index
-wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr16.fa.gz
-gunzip chr16.fa.gz
-mv chr16.fa index/chr16.fa
-bwa index -a bwtsw index/chr16.fa
 
 
 
@@ -102,13 +126,6 @@ varscan somatic path_to_normal_mpileup path_to_tumor_mpileup varscan_results/$ou
 
 
 # Basic VCF Annotation
-
-
-
-wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz
-gunzip gencode.v24lift37.basic.annotation.gtf.gz
-
-
 
 for i in `find varscan_results/*`
 do
