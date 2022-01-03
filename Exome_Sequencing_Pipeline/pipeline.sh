@@ -38,9 +38,7 @@ done
 # Creating BWA Index
 wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/chromosomes/chr16.fa.gz
 gunzip chr16.fa.gz
-mkdir index
 mv chr16.fa index/chr16.fa
-conda install -y bwa
 bwa index -a bwtsw index/chr16.fa
 
 
@@ -114,7 +112,6 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_m
 gunzip gencode.v24lift37.basic.annotation.gtf.gz
 
 
-conda install -y bedtools
 mkdir intersect
 
 
