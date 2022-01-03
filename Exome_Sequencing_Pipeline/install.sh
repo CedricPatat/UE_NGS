@@ -12,20 +12,25 @@ conda install -y trimmomatic bwa samtools varscan bedtools    # install tools in
 
 # Create files 
 echo -e '\033[1;0;33m ORGANIZATION OF ENVIRONMENT  \033[0m'
-if [ ! -f initial_datas ];then     # initial_datas file containing RNA-Seq data
-  mkdir initial_datas
-else
-    echo "initial_datas already exists"
-fi
 if [ ! -f index ];then     # index file containing RNA-Seq data
   mkdir index
 else
-    echo "trimmomatic_results already exists"
+    echo "index already exists"
+fi
+if [ ! -f annotation ];then     # annotation file containing RNA-Seq data
+  mkdir annotation
+else
+    echo "annotation already exists"
 fi
 if [ ! -f trimmomatic_results ];then     # trimmomatic_results file containing RNA-Seq data
   mkdir trimmomatic_results
 else
     echo "trimmomatic_results already exists"
+fi
+if [ ! -f output_results ];then     # output_results file containing RNA-Seq data
+  mkdir output_results
+else
+    echo "output_results already exists"
 fi
 if [ ! -f varscan_results ];then     # varscan_results file containing RNA-Seq data
   mkdir varscan_results
