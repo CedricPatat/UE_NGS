@@ -17,3 +17,13 @@ if [ ! -f initial_datas ];then     # initial_datas file containing RNA-Seq data
 else
     echo "initial_datas already exists"
 fi
+if [ ! -f index ];then     # index file containing RNA-Seq data
+  mkdir index
+else
+    echo "trimmomatic_results already exists"
+fi
+if [ ! -f trimmomatic_results ];then     # trimmomatic_results file containing RNA-Seq data
+  mkdir trimmomatic_results
+else
+    echo "trimmomatic_results already exists"
+fi

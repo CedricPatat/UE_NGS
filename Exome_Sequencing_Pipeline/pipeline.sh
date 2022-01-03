@@ -62,6 +62,7 @@ done
 
 # Processing SAM files
 
+
 files=()  # list containing the names of the files
 j=0     # increment index
 for i in `find outputs/*.sam`    # Loop saving each 1P.fastq file name in the list
