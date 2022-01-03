@@ -27,7 +27,7 @@ fi
 # Downloading the genome annotation
 if [ ! -e annotation/gencode.v24lift37.basic.annotation.gtf ];then 
     wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_24/GRCh37_mapping/gencode.v24lift37.basic.annotation.gtf.gz   # download the annotation
-    gunzip *.gtf.gz            # annotation file decompression
+    gunzip *.gtf.gz        # annotation file decompression
     mv *.gtf annotation/   # moving the annotation file to index
 else
     echo "Annotation is already downloaded."
@@ -69,15 +69,15 @@ files=()  # list containing the names of the files
 j=0     # increment index
 for i in `find trimmomatic_results/*_1P.fastq`    # Loop saving each 1P.fastq file name in the list
 do
-name=` echo $i|cut -d"/" -f2 ` 
-name=` echo $name|cut -d"_" -f1 `
+name=` echo $i|cut -d"/" -f2 `      # renaming the element to unsave the path
+name=` echo $name|cut -d"_" -f1 `   # renaming the element to unsave the last characters
 files[j]=$name
 j=$(($j + 1))
 done
 
-for i in `seq 0 $(($j-1))`  # Loop on each file
+for i in `seq 0 $(($j-1))`  # BWA loop on each file
 do
-bwa mem -M -t 2 -A 2 -E 1 index/chr16.fa trimmomatic_results/${files[$i]}_1P.fastq trimmomatic_results/${files[$i]}_2P.fastq > output_results/${files[$i]}.sam
+bwa mem -M -t 2 -A 2 -E 1 index/chr16.fa trimmomatic_results/${files[$i]}_1P.fastq trimmomatic_results/${files[$i]}_2P.fastq > output_results/${files[$i]}.sam   # mapping with bwa
 done
 
 # Processing SAM files
